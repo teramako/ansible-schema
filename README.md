@@ -5,6 +5,10 @@ For [YAML of VSCode][redhat.vscode-yaml]
 Create json-schemas for ansible playbook and role/task including [json.schemastore.org/ansible-role-2.9].
 In addtion, these contain schemas for almost all available [keywords][ansible-keywords].
 
+![complate_action_names](docs/complete_action_name.png)
+
+![complete_addtional_keyword](docs/complete_addtional_keyword.png)
+
 ## Build
 ```sh
 make clean
