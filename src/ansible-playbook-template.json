@@ -89,8 +89,25 @@
                 "order": {
                     "type": "string",
                     "default": "inventory",
-                    "enum": ["inventory","reverse_inventory","sorted","shuffle","reverse_sorted"],
-                    "description": "Controls the sorting of hosts as they are used for executing the play. Possible values are inventory (default), sorted, reverse_sorted, reverse_inventory and shuffle."
+                    "oneOf": [
+                        {
+                            "const": "inventory",
+                            "description": "The order provided in the inventory"
+                        }, {
+                            "const": "reverse_inventory",
+                            "description": "The reverse of the order provided by the inventory"
+                        }, {
+                            "const": "sorted",
+                            "description": "Sorted alphabetically sorted by name"
+                        }, {
+                            "const": "reverse_sorted",
+                            "description": "Sorted by name in reverse alphabetical order"
+                        }, {
+                            "const": "shuffle",
+                            "description": "Randomly ordered on each run"
+                        }
+                    ],
+                    "description": "Controls the sorting of hosts as they are used for executing the play."
                 },
                 "post_tasks": {
                     "type": "array",
