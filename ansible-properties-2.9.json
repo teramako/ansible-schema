@@ -77,10 +77,87 @@
                 "connection": {
                     "type": "string",
                     "description": "Allows you to change the connection plugin used for tasks to execute on the target.",
-                    "enum": [
-                        "buildah","chroot","docker","funcd","httpapi","iocage","jail","kubectl","libvirt_lxc","local","lxc","lxd",
-                        "napaplm","netconf","network_cli","oc","paramiko_ssh","persistent","padman","psrp","qubes","saltstack",
-                        "ssh","vmware_tools","winrm","zone"
+                    "default": "ssh",
+                    "oneOf": [
+                        {
+                            "const": "buildah",
+                            "description": "Interact with an existing buildah container"
+                        }, {
+                            "const": "chroot",
+                            "description": "Interact with local chroot"
+                        }, {
+                            "const": "docker",
+                            "description": "Run tasks in docker containers"
+                        }, {
+                            "const": "funcd",
+                            "description": "Use funcd to connect to target"
+                        }, {
+                            "const": "httpapi",
+                            "description": "Use httpapi to run command on network appliances"
+                        }, {
+                            "const": "iocage",
+                            "description": "Run tasks in iocage jails"
+                        }, {
+                            "const": "jail",
+                            "description": "Run tasks in jails"
+                        }, {
+                            "const": "kubectl",
+                            "description": "Execute tasks in pods running on Kubernetes"
+                        }, {
+                            "const": "libvirt_lxc",
+                            "description": "Run tasks in lxc containers via libvirt"
+                        }, {
+                            "const": "local",
+                            "description": "execute on controller"
+                        }, {
+                            "const": "lxc",
+                            "description": "Run tasks in lxc containers via lxc python library"
+                        }, {
+                            "const": "lxd",
+                            "description": "Run tasks in lxc containers via lxc CLI"
+                        }, {
+                            "const": "napaplm",
+                            "description": "Provides persistent connection using NAPALM"
+                        }, {
+                            "const": "netconf",
+                            "description": "Provides a persistent connection using the netconf protocol"
+                        }, {
+                            "const": "network_cli",
+                            "description": "Use network_cli to run command on network appliances"
+                        }, {
+                            "const": "oc",
+                            "description": "Execute tasks in pods running on OpenShift"
+                        }, {
+                            "const": "paramiko_ssh",
+                            "description": "Run tasks via python ssh (paramiko)"
+                        }, {
+                            "const": "persistent",
+                            "description": "Use a persistent unix socket for connection"
+                        }, {
+                            "const": "padman",
+                            "description": "Interact with an existing podman container"
+                        }, {
+                            "const": "psrp",
+                            "description": "Run tasks over Microsoft PowerShell Remoting Protocol"
+                        }, {
+                            "const": "qubes",
+                            "description": "Interact with an existing QubesOS AppVM"
+                        }, {
+                            "const": "saltstack",
+                            "description": "Allow ansible to piggyback on salt minions"
+                        }, {
+                            "const": "ssh",
+                            "description": "connect via ssh client binary"
+                        }, {
+                            "const": "vmware_tools",
+                            "description": "Execute tasks inside a VM via VMware Tools"
+                        }, {
+                            "const": "winrm",
+                            "description": "Run tasks over Microsoft’s WinRM"
+                        }, {
+                            "const": "zone",
+                            "description": "Run tasks in a zone instance"
+                        }
                     ]
                 },
                 "debugger": {
