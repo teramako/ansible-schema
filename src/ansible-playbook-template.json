@@ -151,7 +151,21 @@
                     "type": "string",
                     "description": "Allows you to choose the connection plugin to use for the play.",
                     "default": "linear",
-                    "enum": ["debug", "free", "host_pinned", "linear"]
+                    "oneOf": [
+                        {
+                            "const": "debug",
+                            "description": "Executes tasks in interactive debug session"
+                        }, {
+                            "const": "free",
+                            "description": "Executes tasks without waiting for all hosts"
+                        }, {
+                            "const": "host_pinned",
+                            "description": "Executes tasks on each host without interruption"
+                        }, {
+                            "const": "linear",
+                            "description": "Executes tasks in a linear fashion"
+                        }
+                    ]
                 },
                 "tasks": {
                     "type": "array",
