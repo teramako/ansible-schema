@@ -1,0 +1,236 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "definitions": {
+        "ansible_number": {
+            "oneOf": [
+                { "type": "number" },
+                { "type": "string" }
+            ]
+        },
+        "ansible_truth": {
+            "oneOf": [
+                { "type": "boolean" },
+                { "type": "string" }
+            ]
+        },
+        "ansible_array": {
+            "oneOf": [
+                { "type": "string" },
+                { "type": "array" }
+            ]
+        },
+        "notplay_properties": {
+            "properties": {
+                "delegate_facts": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Boolean that allows you to apply facts to a delegated host instead of inventory_hostname."
+                },
+                "delegate_to": {
+                    "type": "string",
+                    "description": "Host to execute task instead of the target (inventory_hostname). Connection vars from the delegated host will also be used for the task."
+                },
+                "when": {
+                    "description": "Conditional expression, determines if an iteration of a task is run or not.",
+                    "oneOf": [
+                        { "$ref": "#/definitions/ansible_truth" },
+                        { "type": "array", "items": { "$ref": "#/definitions/ansible_truth" } }
+                    ]
+                }
+            }
+        },
+        "common_properties": {
+            "properties": {
+                "any_erros_fatal": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Force any un-handled task errors on any host to propagate to all hosts and end the play."
+                },
+                "become": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Boolean that controls if privilege escalation is used or not on Task execution. Implemented by the become plugin. See https://docs.ansible.com/ansible/latest/plugins/become.html#become-plugins"
+                },
+                "become_exe": {
+                    "type": "string",
+                    "description": "Path to the executable used to elevate privileges. Implemented by the become plugin. See https://docs.ansible.com/ansible/latest/plugins/become.html#become-plugins"
+                },
+                "become_flags": {
+                    "type": "string",
+                    "description": "A string of flag(s) to pass to the privilege escalation program when become is True."
+                },
+                "become_method": {
+                    "type": "string",
+                    "description": "Which method of privilege escalation to use (such as sudo or su).",
+                    "examples": ["sudo","su","su-exec","gosu","runas"]
+                },
+                "become_user": {
+                    "type": "string",
+                    "description": "User that you ‘become’ after using privilege escalation. The remote/login user must have permissions to become this user."
+                },
+                "check_mode": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "A boolean that controls if a task is executed in ‘check’ mode. See https://docs.ansible.com/ansible/latest/user_guide/playbooks_checkmode.html#check-mode-dry"
+                },
+                "collections": {
+                    "type": "array",
+                    "description": "List of collection namespaces to search for modules, plugins, and roles. See https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#collections-using-playbook",
+                    "items": { "type": "string" }
+                },
+                "connection": {
+                    "type": "string",
+                    "description": "Allows you to change the connection plugin used for tasks to execute on the target.",
+                    "enum": [
+                        "buildah","chroot","docker","funcd","httpapi","iocage","jail","kubectl","libvirt_lxc","local","lxc","lxd",
+                        "napaplm","netconf","network_cli","oc","paramiko_ssh","persistent","padman","psrp","qubes","saltstack",
+                        "ssh","vmware_tools","winrm","zone"
+                    ]
+                },
+                "debugger": {
+                    "type": "string",
+                    "description": "Enable debugging tasks based on state of the task result. See https://docs.ansible.com/ansible/latest/user_guide/playbooks_debugger.html#playbook-debugger",
+                    "enum": ["always","never","on_failed","on_unreachable","on_skipped"]
+                },
+                "diff": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Toggle to make tasks return ‘diff’ information or not."
+                },
+                "envinroment": {
+                    "type": "object",
+                    "description": "A dictionary that gets converted into environment vars to be provided for the task upon execution. This can ONLY be used with modules. This isn’t supported for any other type of plugins nor Ansible itself nor its configuration, it just sets the variables for the code responsible for executing the task. This is not a recommended way to pass in confidential data."
+                },
+                "ignore_errors": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Boolean that allows you to ignore task failures and continue with play. It does not affect connection errors."
+                },
+                "ignore_unreachable": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Boolean that allows you to ignore task failures due to an unreachable host and continue with the play. This does not affect other task errors (see `ignore_errors`) but is useful for groups of volatile/ephemeral hosts."
+                },
+                "module_defaults": {
+                    "type": "object",
+                    "description": "Specifies default parameter values for modules."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Identifier. Can be used for documentation, in or tasks/handlers."
+                },
+                "no_log": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Boolean that controls information disclosure."
+                },
+                "port": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Used to override the default port used in a connection."
+                },
+                "remote_user": {
+                    "type": "string",
+                    "description": "User used to log into the target via the connection plugin."
+                },
+                "run_once": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Boolean that will bypass the host loop, forcing the task to attempt to execute on the first host available and afterwards apply any results and facts to all active hosts in the same batch."
+                },
+                "tags": {
+                    "$ref": "#/definitions/ansible_array",
+                    "description": "Tags applied to the task or included tasks, this allows selecting subsets of tasks from the command line."
+                },
+                "throttle": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Limit number of concurrent task runs on task, block and playbook level. This is independent of the forks and serial settings, but cannot be set higher than those limits. For example, if forks is set to 10 and the throttle is set to 15, at most 10 hosts will be operated on in parallel."
+                },
+                "timeout": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Time limit for task to execute in, if exceeded Ansible will interrupt and fail the task."
+                },
+                "vars": {
+                    "type": "object",
+                    "description": "Dictionary/map of variables"
+                }
+            }
+        },
+        "task_properties": {
+            "properties": {
+                "async": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Run a task asynchronously if the C(action) supports this; value is maximum runtime in seconds."
+                },
+                "chaned_when": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Conditional expression that overrides the task’s normal ‘changed’ status."
+                },
+                "delay": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Number of seconds to delay between retries. This setting is only used in combination with until."
+                },
+                "failed_when": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Conditional expression that overrides the task’s normal ‘failed’ status."
+                },
+                "loop": {
+                    "$ref": "#/definitions/ansible_array",
+                    "description": "Takes a list for the task to iterate over, saving each list element into the `item` variable (configurable via loop_control)"
+                },
+                "loop_control": {
+                    "type": "object",
+                    "description": "Several keys here allow you to modify/set loop behaviour in a task.",
+                    "properties": {
+                        "label": {
+                            "type": "string",
+                            "description": "When looping over complex data structures, the console output of your task can be enormous.",
+                            "default": "{{ item }}"
+                        },
+                        "pause": {
+                            "$ref": "#/definitions/ansible_number",
+                            "description": "To control the time (in seconds) between the execution of each item in a task loop."
+                        },
+                        "index_var": {
+                            "type": "string",
+                            "description": "To keep track of where you are in a loop, use the index_var directive with loop_control."
+                        },
+                        "loop_var": {
+                            "type": "string",
+                            "description": "Defining inner and outer variable names"
+                        },
+                        "extenced": {
+                            "$ref": "#/definitions/ansible_truth",
+                            "description": "Get extended loop information."
+                        }
+                    }
+                },
+                "notify": {
+                    "type": "string",
+                    "description": "List of handlers to notify when the task returns a ‘changed=True’ status."
+                },
+                "poll": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Sets the polling interval in seconds for async tasks (default 10s).",
+                    "default": 10
+                },
+                "register": {
+                    "type": "string",
+                    "description": "Name of variable that will contain task status and module return data."
+                },
+                "retries": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Number of retries before giving up in a until loop. This setting is only used in combination with until."
+                },
+                "until": {
+                    "type": "string",
+                    "description": "This keyword implies a ‘retries loop’ that will go on until the condition supplied here is met or we hit the retries limit."
+                },
+                "with_list": {
+                    "$ref": "#/definitions/ansible_array",
+                    "description": "Same as `loop`"
+                },
+                "with_items": {
+                    "$ref": "#/definitions/ansible_array",
+                    "description": "list of flatten(lavel=1)"
+                }
+            },
+            "dependencies": {
+                "poll": ["async"],
+                "loop_control": ["loop"],
+                "delay": ["until"],
+                "retries": ["until"]
+            }
+        }
+    }
+}
