@@ -1,0 +1,3 @@
+src/ansible-role-2.9
+ansible-playbook*.json
+ansible-tasks*.json
