@@ -1,0 +1,155 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Ansible Playbook 2.9",
+    "type": "array",
+    "minLength": 1,
+    "items": {
+        "anyOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "import_playbook": {
+                        "type": "string",
+                        "description": "Import a playbook"
+                    }
+                },
+                "required": ["import_playbook"]
+            },
+            {
+                "type": "object",
+                "allOf": [
+                    { "$ref": "#/definitions/play_properties" },
+                    { "$ref": "ansible-properties-2.9.json" }
+                ],
+                "required": ["hosts"]
+            }
+        ]
+    },
+    "definitions": {
+        "ansible_truth": {
+            "anyOf": [
+                { "type": "boolean" },
+                { "type": "string" }
+            ]
+        },
+        "ansible_number": {
+            "oneOf": [
+                { "type": "integer" },
+                { "type": "string" }
+            ]
+        },
+        "ansible_array": {
+            "oneOf": [
+                { "type": "string" },
+                { "type": "array" }
+            ]
+        },
+        "gather_subst": {
+            "type": "string",
+            "enum": ["!all","!any","!min","!ohai","!smart","all","any","min","ohai","smart"]
+        },
+        "play_properties": {
+            "properties": {
+                "fact_path": {
+                    "type": "string",
+                    "description": "Set the fact path option for the fact gathering plugin controlled by gather_facts(https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html#term-gather-facts)."
+                },
+                "force_handlers": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "Will force notified handler execution for hosts even if they failed during the play. Will not trigger if the play itself fails."
+                },
+                "gather_facts": {
+                    "anyOf": [
+                        { "$ref": "#/definitions/ansible_truth" },
+                        { "$ref": "#/definitions/gather_subst" }
+                    ],
+                    "description": "A boolean that controls if the play will automatically run the ‘setup’ task to gather facts for the hosts."
+                },
+                "gather_subst": {
+                    "$ref": "#/definitions/gather_subst",
+                    "description": "Allows you to pass subset options to the fact gathering plugin controlled by gather_facts."
+                },
+                "gather_timeout": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Allows you to set the timeout for the fact gathering plugin controlled by gather_facts."
+                },
+                "handlers": {
+                    "$ref": "ansible-tasks.json",
+                    "description": "A section with tasks that are treated as handlers, these won’t get executed normally, only when notified after each section of tasks is complete. A handler’s listen field is not templatable."
+                },
+                "hosts": {
+                    "$ref": "#/definitions/ansible_array",
+                    "description": "A list of groups, hosts or host pattern that translates into a list of hosts that are the play’s target."
+                },
+                "max_fail_percentage": {
+                    "type": "integer",
+                    "description": "can be used to abort the run after a given percentage of hosts in the current batch has failed."
+                },
+                "order": {
+                    "type": "string",
+                    "default": "inventory",
+                    "enum": ["inventory","reverse_inventory","sorted","shuffle","reverse_sorted"],
+                    "description": "Controls the sorting of hosts as they are used for executing the play. Possible values are inventory (default), sorted, reverse_sorted, reverse_inventory and shuffle."
+                },
+                "post_tasks": {
+                    "type": "array",
+                    "description": "A list of tasks to execute after the tasks section.",
+                    "$ref": "ansible-tasks.json"
+                },
+                "pre_tasks": {
+                    "type": "array",
+                    "description": "A list of tasks to execute before roles.",
+                    "$ref": "ansible-tasks.json"
+                },
+                "roles": {
+                    "type": "array",
+                    "description": "List of roles to be imported into the play",
+                    "items": {
+                        "anyOf": [
+                            { "type": "string", "description": "Name of the role" },
+                            {
+                                "type": "object",
+                                "allOf": [
+                                    {
+                                        "properties": {
+                                            "role": {
+                                                "type": "string",
+                                                "description": "Name of the role"
+                                            }
+                                        }
+                                    },
+                                    { "$ref": "ansible-tasks.json#/definitions/common_properties" }
+                                ],
+                                "required": ["role"]
+                            }
+                        ]
+                    }
+                },
+                "serial": {
+                    "$ref": "#/definitions/ansible_number",
+                    "description": "Explicitly define how Ansible batches the execution of the current play on the play’s target"
+                },
+                "strategy": {
+                    "type": "string",
+                    "description": "Allows you to choose the connection plugin to use for the play.",
+                    "default": "linear",
+                    "enum": ["debug", "free", "host_pinned", "linear"]
+                },
+                "tasks": {
+                    "type": "array",
+                    "description": "Main list of tasks to execute in the play, they run after roles and before post_tasks.",
+                    "$ref": "ansible-tasks.json"
+                },
+                "vars_files": {
+                    "$ref": "#/definitions/ansible_array",
+                    "description": "List of files that contain vars to include in the play."
+                },
+                "vars_prompt": {
+                    "$ref": "#/definitions/ansible_array",
+                    "description": "list of variables to prompt for."
+                }
+            }
+        }
+    }
+}
