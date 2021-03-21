@@ -163,7 +163,24 @@
                 "debugger": {
                     "type": "string",
                     "description": "Enable debugging tasks based on state of the task result. See https://docs.ansible.com/ansible/latest/user_guide/playbooks_debugger.html#playbook-debugger",
-                    "enum": ["always","never","on_failed","on_unreachable","on_skipped"]
+                    "oneOf": [
+                        {
+                            "const": "always",
+                            "description": "Always invoke the debugger, regardless of the outcome"
+                        }, {
+                            "const": "never",
+                            "description": "Never invoke the debugger, regardless of the outcome"
+                        }, {
+                            "const": "on_failed",
+                            "description": "Only invoke the debugger if a task fails"
+                        }, {
+                            "const": "on_unreachable",
+                            "description": "Only invoke the debugger if the a host was unreachable"
+                        }, {
+                            "const": "on_skipped",
+                            "description": "Only invoke the debugger if the task is skipped"
+                        }
+                    ]
                 },
                 "diff": {
                     "$ref": "#/definitions/ansible_truth",
