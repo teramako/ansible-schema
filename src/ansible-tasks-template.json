@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Ansible 2.9",
+  "description": "Ansible 2.9 JSON Schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "$ref": "#/definitions/tasks"
+  },
+  "definitions": {
+    "ansible_number": {
+      "oneOf": [
+        { "type": "integer" },
+        { "type": "string" }
+      ]
+    },
+    "ansible_truth": {
+      "oneOf": [
+        { "type": "boolean" },
+        { "type": "integer", "enum": [ 0, 1 ] },
+        { "type": "string" }
+      ]
+    },
+    "ansible_array": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array" }
+      ]
+    },
+    "ansible_block": {
+      "allOf": [
+        {
+          "properties": {
+            "block": {
+              "type": "array",
+              "description": "List of tasks in a block.",
+              "items": { "$ref": "#/definitions/tasks" }
+            },
+            "always": {
+              "type": "array",
+              "description": "List of tasks, in a block, that execute no matter if there is an error in the block or not.",
+              "items": { "$ref": "#/definitions/tasks" }
+            },
+            "rescue": {
+              "type": "array",
+              "description": "List of tasks in a block that run if there is a task error in the main block list.",
+              "items": { "$ref": "#/definitions/tasks" }
+            }
+          },
+          "required": [ "block" ]
+        },
+        { "$ref": "#/definitions/common_properties" }
+      ]
+    },
+    "common_properties": {
+      "allOf": [
+        { "$ref": "ansible-properties-2.9.json#/definitions/common_properties" },
+        { "$ref": "ansible-properties-2.9.json#/definitions/notplay_properties" }
+      ]
+    },
+    "task_properties": {
+      "allOf": [
+        { "$ref": "ansible-properties-2.9.json#/definitions/common_properties" },
+        { "$ref": "ansible-properties-2.9.json#/definitions/notplay_properties" },
+        { "$ref": "ansible-properties-2.9.json#/definitions/task_properties" }
+      ]
+    },
+    "tasks": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ansible_block"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "description": "The ‘action’ to execute for a task, it normally translates into a C(module) or action plugin."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "action arguments.",
+                  "properties": {}
+                }
+              },
+              "required": ["action"]
+            },
+            { "$ref": "#/definitions/task_properties"}
+          ]
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "local_action": {
+                  "type": "string",
+                  "description": "Same as action but also implies `delegate_to: localhost`"
+                },
+                "args": {
+                  "type": "object",
+                  "description": "local_action arguments.",
+                  "properties": {}
+                }
+              },
+              "required": ["local_action"]
+            },
+            { "$ref": "#/definitions/task_properties" }
+          ]
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "meta": {
+                  "type": "string",
+                  "description": "Execute Ansible ‘actions’",
+                  "enum":[
+                    "clear_facts", "clear_host_errors", "end_host", "end_play", "flush_handlers",
+                    "noop", "refresh_inventory", "reset_connection"
+                  ]
+                }
+              },
+              "required": ["meta"]
+            },
+            { "$ref": "#/definitions/task_properties" }
+          ]
+        }
+      ]
+    }
+  }
+}
