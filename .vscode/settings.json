@@ -1,0 +1,7 @@
+{
+    "yaml.schemas": {
+        "ansible-playbook-2.9.json": ["test.yml"],
+        "ansible-tasks-2.9.json": ["test_role.yml"]
+    },
+    "yaml.schemaStore.enable": false
+}
