@@ -29,6 +29,7 @@ def create_action_schema(name:str, data:dict) -> dict:
             }, "required": [name]
         }
     return {
+        "title": "Action: %s" % name,
         "allOf": [
             { "$ref": "#/definitions/task_properties" },
             action_schema
