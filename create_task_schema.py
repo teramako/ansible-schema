@@ -56,8 +56,15 @@ def get_actions(json_file:str) -> list:
             if name in item:
                 if "type" in item[name] and item[name]['type'] == 'string':
                     if len(item['properties']) == 0:
+                        '''
+                        'properties' is not contained in `include`, `import_tasks`, `import_playbook`,
+                        and argument is string type only.
+                        '''
                         property_schema = { "type": "string", "description": item[name].get('description', '') }
                     else:
+                        '''
+                        The arguments of `include_vars` and `include_tasks` are either string type or object type
+                        '''
                         property_schema = {
                             "oneOf": [
                                 { "type": "string", "description": item[name].get('description', '') },
@@ -67,6 +74,9 @@ def get_actions(json_file:str) -> list:
                 else:
                     property_schema = { "type": "object", "properties": item['properties'] }
             else:
+                '''
+                `shell`, `script`, `raw`, `command`
+                '''
                 property_schema:dict = item['properties']
                 if 'name' in property_schema:
                     del property_schema['name']
