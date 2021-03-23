@@ -8,10 +8,18 @@ def create_action_schema(name:str, data:dict) -> dict:
     1アクションの定義を整形して返す
     '''
     if 'args' in data:
+        data['args']['additionalProperties'] = False
         action_schema = {
             "properties": {
                 name: data[name],
                 "args": data["args"]
+            }, "required": [name]
+        }
+    elif 'properties' in data:
+        data['additionalProperties'] = False
+        action_schema = {
+            "properties": {
+                name: data
             }, "required": [name]
         }
     else:
@@ -53,7 +61,7 @@ def get_actions(json_file:str) -> list:
                         property_schema = {
                             "oneOf": [
                                 { "type": "string", "description": item[name].get('description', '') },
-                                { "type": "object", "properties": item['properties'] }
+                                { "type": "object", "properties": item['properties'], "additionalProperties": False }
                             ]
                         }
                 else:
