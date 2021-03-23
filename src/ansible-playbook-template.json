@@ -20,7 +20,7 @@
                 "type": "object",
                 "allOf": [
                     { "$ref": "#/definitions/play_properties" },
-                    { "$ref": "ansible-properties-2.9.json" }
+                    { "$ref": "ansible-properties-2.9.json#/definitions/common_properties" }
                 ],
                 "required": ["hosts"]
             }
