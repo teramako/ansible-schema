@@ -7,6 +7,9 @@ OTHER_RPROPERTIES = {
     "_": "#/definitions/task_properties",
     "import_role": "#/definitions/common_properties"
 }
+ACTION_LIST = {
+    "set_fact": "src/action-set_fact.json"
+}
 def get_additional_properties_ref(name:str) -> str:
     return OTHER_RPROPERTIES.get(name, OTHER_RPROPERTIES["_"])
 
@@ -14,7 +17,9 @@ def create_action_schema(name:str, data:dict) -> dict:
     '''
     1アクションの定義を整形して返す
     '''
-    if 'args' in data:
+    if name in ACTION_LIST:
+        action_schema = load(ACTION_LIST[name])
+    elif 'args' in data:
         data['args']['additionalProperties'] = False
         action_schema = {
             "properties": {
