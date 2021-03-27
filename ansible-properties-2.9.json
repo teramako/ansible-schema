@@ -269,7 +269,7 @@
                         "label": {
                             "type": "string",
                             "description": "When looping over complex data structures, the console output of your task can be enormous.",
-                            "default": "{{ item }}"
+                            "default": "\"{{ item }}\""
                         },
                         "pause": {
                             "$ref": "#/definitions/ansible_number",
