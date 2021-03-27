@@ -3,15 +3,39 @@ import json
 import logging
 import io
 
+OTHER_RPROPERTIES = {
+    "_": "#/definitions/task_properties",
+    "import_role": "#/definitions/common_properties"
+}
+ACTION_LIST = {
+    "set_fact": "src/action-set_fact.json"
+}
+EXCLUDE_ACTION_LIST = [
+    "name",
+    "import_playbook"
+]
+def get_additional_properties_ref(name:str) -> str:
+    return OTHER_RPROPERTIES.get(name, OTHER_RPROPERTIES["_"])
+
 def create_action_schema(name:str, data:dict) -> dict:
     '''
     1アクションの定義を整形して返す
     '''
-    if 'args' in data:
+    if name in ACTION_LIST:
+        action_schema = load(ACTION_LIST[name])
+    elif 'args' in data:
+        data['args']['additionalProperties'] = False
         action_schema = {
             "properties": {
                 name: data[name],
                 "args": data["args"]
+            }, "required": [name]
+        }
+    elif 'properties' in data:
+        data['additionalProperties'] = False
+        action_schema = {
+            "properties": {
+                name: data
             }, "required": [name]
         }
     else:
@@ -21,8 +45,9 @@ def create_action_schema(name:str, data:dict) -> dict:
             }, "required": [name]
         }
     return {
+        "title": "Action: %s" % name,
         "allOf": [
-            { "$ref": "#/definitions/task_properties" },
+            { "$ref": get_additional_properties_ref(name) },
             action_schema
         ]
     }
@@ -46,19 +71,32 @@ def get_actions(json_file:str) -> list:
         if 'required' in item and not 'name' in item['required']:
             name = item['required'][0]
             if name in item:
+                if name in EXCLUDE_ACTION_LIST:
+                    continue
+
                 if "type" in item[name] and item[name]['type'] == 'string':
                     if len(item['properties']) == 0:
+                        '''
+                        'properties' is not contained in `include`, `import_tasks`, `import_playbook`,
+                        and argument is string type only.
+                        '''
                         property_schema = { "type": "string", "description": item[name].get('description', '') }
                     else:
+                        '''
+                        The arguments of `include_vars` and `include_tasks` are either string type or object type
+                        '''
                         property_schema = {
                             "oneOf": [
                                 { "type": "string", "description": item[name].get('description', '') },
-                                { "type": "object", "properties": item['properties'] }
+                                { "type": "object", "properties": item['properties'], "additionalProperties": False }
                             ]
                         }
                 else:
                     property_schema = { "type": "object", "properties": item['properties'] }
             else:
+                '''
+                `shell`, `script`, `raw`, `command`
+                '''
                 property_schema:dict = item['properties']
                 if 'name' in property_schema:
                     del property_schema['name']
@@ -67,7 +105,7 @@ def get_actions(json_file:str) -> list:
         if 'properties' in item:
             props = item['properties']
             for key in props:
-                if key == "name":
+                if key in EXCLUDE_ACTION_LIST:
                     continue
                 actions.append(create_action_schema(key, props[key]))
     return actions

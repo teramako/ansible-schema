@@ -1,0 +1,15 @@
+{
+    "properties": {
+        "set_fact": {
+            "type": "object",
+            "description": "This module allows setting new variables.\nVariables are set on a host-by-host basis just like facts discovered by the setup module.\nThese variables will be available to subsequent plays during an ansible-playbook run.\nSet C(cacheable) to C(yes) to save variables across executions using a fact cache. Variables created with set_fact have different precedence depending on whether they are or are not cached.\nPer the standard Ansible variable precedence rules, many other types of variables have a higher priority, so this value may be overridden.\nThis module is also supported for Windows targets.",
+            "properties": {
+                "cacheable": {
+                    "$ref": "#/definitions/ansible_truth",
+                    "description": "This boolean converts the variable into an actual 'fact' which will also be added to the fact cache, if fact caching is enabled.\nNormally this module creates 'host level variables' and has much higher precedence, this option changes the nature and precedence (by 7 steps) of the variable created. https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable\nThis actually creates 2 copies of the variable, a normal 'set_fact' host variable with high precedence and a lower 'ansible_fact' one that is available for persistance via the facts cache plugin. This creates a possibly confusing interaction with C(meta: clear_facts) as it will remove the 'ansible_fact' but not the host variable."
+                }
+            }
+        }
+    },
+    "required": ["set_fact"]
+}

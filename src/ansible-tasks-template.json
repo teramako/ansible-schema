@@ -118,9 +118,32 @@
                 "meta": {
                   "type": "string",
                   "description": "Execute Ansible ‘actions’",
-                  "enum":[
-                    "clear_facts", "clear_host_errors", "end_host", "end_play", "flush_handlers",
-                    "noop", "refresh_inventory", "reset_connection"
+                  "oneOf": [
+                    {
+                      "const": "clear_facts",
+                      "description": "causes the gathered facts for the hosts specified in the play's list of hosts to be cleared, including the fact cache."
+                    }, {
+                      "const": "clear_host_errors",
+                      "description": "clears the failed state (if any) from hosts specified in the play's list of hosts."
+                    }, {
+                      "const": "end_host",
+                      "description": "Causes the play to end for the current host without failing it."
+                    }, {
+                      "const": "end_play",
+                      "description": "causes the play to end without failing the host(s). Note that this affects all hosts."
+                    }, {
+                      "const": "flush_handlers",
+                      "description": "makes Ansible run any handler tasks which have thus far been notified. Ansible inserts these tasks internally at certain points to implicitly trigger handler runs (after pre/post tasks, the final role execution, and the main tasks section of your plays)."
+                    }, {
+                      "const": "noop",
+                      "description": "This literally does 'nothing'. It is mainly used internally and not recommended for general use."
+                    }, {
+                      "const": "refresh_inventory",
+                      "description": "forces the reload of the inventory, which in the case of dynamic inventory scripts means they will be re-executed. If the dynamic inventory script is using a cache, Ansible cannot know this and has no way of refreshing it (you can disable the cache or, if available for your specific inventory datasource (e.g. aws), you can use the an inventory plugin instead of an inventory script). This is mainly useful when additional hosts are created and users wish to use them instead of using the add_host module."
+                    }, {
+                      "const": "reset_connection",
+                      "description": "interrupts a persistent connection (i.e. ssh + control persist)"
+                    }
                   ]
                 }
               },
