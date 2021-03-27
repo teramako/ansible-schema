@@ -10,6 +10,10 @@ OTHER_RPROPERTIES = {
 ACTION_LIST = {
     "set_fact": "src/action-set_fact.json"
 }
+EXCLUDE_ACTION_LIST = [
+    "name",
+    "import_playbook"
+]
 def get_additional_properties_ref(name:str) -> str:
     return OTHER_RPROPERTIES.get(name, OTHER_RPROPERTIES["_"])
 
@@ -67,6 +71,9 @@ def get_actions(json_file:str) -> list:
         if 'required' in item and not 'name' in item['required']:
             name = item['required'][0]
             if name in item:
+                if name in EXCLUDE_ACTION_LIST:
+                    continue
+
                 if "type" in item[name] and item[name]['type'] == 'string':
                     if len(item['properties']) == 0:
                         '''
@@ -98,7 +105,7 @@ def get_actions(json_file:str) -> list:
         if 'properties' in item:
             props = item['properties']
             for key in props:
-                if key == "name":
+                if key in EXCLUDE_ACTION_LIST:
                     continue
                 actions.append(create_action_schema(key, props[key]))
     return actions
