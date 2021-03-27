@@ -3,6 +3,13 @@ import json
 import logging
 import io
 
+OTHER_RPROPERTIES = {
+    "_": "#/definitions/task_properties",
+    "import_role": "#/definitions/common_properties"
+}
+def get_additional_properties_ref(name:str) -> str:
+    return OTHER_RPROPERTIES.get(name, OTHER_RPROPERTIES["_"])
+
 def create_action_schema(name:str, data:dict) -> dict:
     '''
     1アクションの定義を整形して返す
@@ -31,7 +38,7 @@ def create_action_schema(name:str, data:dict) -> dict:
     return {
         "title": "Action: %s" % name,
         "allOf": [
-            { "$ref": "#/definitions/task_properties" },
+            { "$ref": get_additional_properties_ref(name) },
             action_schema
         ]
     }
