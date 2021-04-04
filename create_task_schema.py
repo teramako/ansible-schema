@@ -2,6 +2,7 @@
 import json
 import logging
 import io
+import copy
 
 OTHER_RPROPERTIES = {
     "_": "#/definitions/task_properties",
@@ -17,41 +18,6 @@ EXCLUDE_ACTION_LIST = [
 def get_additional_properties_ref(name:str) -> str:
     return OTHER_RPROPERTIES.get(name, OTHER_RPROPERTIES["_"])
 
-def create_action_schema(name:str, data:dict) -> dict:
-    '''
-    1アクションの定義を整形して返す
-    '''
-    if name in ACTION_LIST:
-        action_schema = load(ACTION_LIST[name])
-    elif 'args' in data:
-        data['args']['additionalProperties'] = False
-        action_schema = {
-            "properties": {
-                name: data[name],
-                "args": data["args"]
-            }, "required": [name]
-        }
-    elif 'properties' in data:
-        data['additionalProperties'] = False
-        action_schema = {
-            "properties": {
-                name: data
-            }, "required": [name]
-        }
-    else:
-        action_schema = {
-            "properties": {
-                name: data
-            }, "required": [name]
-        }
-    return {
-        "title": "Action: %s" % name,
-        "allOf": [
-            { "$ref": get_additional_properties_ref(name) },
-            action_schema
-        ]
-    }
-
 def load(json_file:str) -> dict:
     '''
     jsonファイルを読み込んで返す
@@ -59,8 +25,91 @@ def load(json_file:str) -> dict:
     with open(json_file, 'r') as jf:
         data = json.load(jf)
     return data
-    
-def get_actions(json_file:str) -> list:
+
+class ActionSchema:
+    '''
+    Ansible action-schema generator
+    '''
+    def __init__(self, name:str, description:str, arguments:dict,
+                actionType:str='object', additionalProperties:bool=False):
+        self.name = name
+        self.description = description
+        self.arguments = arguments
+        self.type = actionType
+        self.additionalProperties= additionalProperties
+
+    def get_property_scehma(self) -> dict:
+        '''
+        generate action property schema
+        '''
+        args = copy.copy(self.arguments)
+        args['description'] = self.description
+        args['additionalProperties'] = self.additionalProperties
+        if self.type == 'string':
+            return {
+                "title": "Action: %s" % self.name,
+                "allOf": [
+                    {
+                        "properties": {
+                            self.name: { "type": "string", "description": self.description }
+                        },
+                        "required": [self.name]
+                    },
+                    { "$ref": get_additional_properties_ref(self.name) }
+                ]
+            }
+        elif self.type == 'complex':
+            return {
+                "title": "Action: %s" % self.name,
+                "allOf": [
+                    {
+                        "properties": {
+                            self.name: {
+                                "description": self.description,
+                                "oneOf": [
+                                    { "type": "string" },
+                                    { "type": "object", "properties": args }
+                                ]
+                            }
+                        },
+                        "required": [self.name]
+                    },
+                    { "$ref": get_additional_properties_ref(self.name) }
+                ]
+            }
+        elif self.type == 'shell':
+            return {
+                "title": "Action: %s" % self.name,
+                "allOf": [
+                    {
+                        "properties": {
+                            self.name: {
+                                "type": "string",
+                                "description": self.description
+                            },
+                            "args": args
+                        },
+                        "required": [self.name]
+                    },
+                    { "$ref": get_additional_properties_ref(self.name) }
+                ]
+            }
+        else:
+            return {
+                "title": "Action: %s" % self.name,
+                "allOf": [
+                    {
+                        "properties": {
+                            self.name: args
+                        },
+                        "required": [self.name]
+                    },
+                    { "$ref": get_additional_properties_ref(self.name) }
+                ]
+            }
+
+
+def get_actions(json_file:str) -> iter:
     '''
     json.schemastore.org からダウンロードしたansible-roleのスキーマを読み込み、
     タスクのアクション部分の定義を整形し、リストで返す
@@ -68,55 +117,45 @@ def get_actions(json_file:str) -> list:
     data = load(json_file)
     actions = []
     for item in data['items']['anyOf']:
-        if 'required' in item and not 'name' in item['required']:
-            name = item['required'][0]
-            if name in item:
-                if name in EXCLUDE_ACTION_LIST:
-                    continue
-
-                if "type" in item[name] and item[name]['type'] == 'string':
-                    if len(item['properties']) == 0:
-                        '''
-                        'properties' is not contained in `include`, `import_tasks`, `import_playbook`,
-                        and argument is string type only.
-                        '''
-                        property_schema = { "type": "string", "description": item[name].get('description', '') }
-                    else:
-                        '''
-                        The arguments of `include_vars` and `include_tasks` are either string type or object type
-                        '''
-                        property_schema = {
-                            "oneOf": [
-                                { "type": "string", "description": item[name].get('description', '') },
-                                { "type": "object", "properties": item['properties'], "additionalProperties": False }
-                            ]
-                        }
-                else:
-                    property_schema = { "type": "object", "properties": item['properties'] }
-            else:
-                '''
-                `shell`, `script`, `raw`, `command`
-                '''
-                property_schema:dict = item['properties']
-                if 'name' in property_schema:
-                    del property_schema['name']
-            actions.append(create_action_schema(name, property_schema))
-            continue
-        if 'properties' in item:
-            props = item['properties']
+        if 'name' in item.get('required', []):
+            props = item.get('properties', {})
             for key in props:
                 if key in EXCLUDE_ACTION_LIST:
                     continue
-                actions.append(create_action_schema(key, props[key]))
-    return actions
+                prop = props[key]
+                if key in ACTION_LIST:
+                    data = load(ACTION_LIST[key])
+                    prop = data['properties'][key]
+                desc = prop.get('description', '')
+                additionalProperties = prop.get('additionalProperties', False)
+                if 'description' in prop:
+                    del prop['description']
+                yield ActionSchema(key, desc, prop, additionalProperties)
 
-def create_task_schema(template_file:str, actions:list) -> dict:
+        else:
+            name = item['required'][0]
+            if name in EXCLUDE_ACTION_LIST:
+                continue
+            props = item.get('properties', {})
+            if name in item:
+                desc = item[name].get('description', '')
+                if len(props) == 0:
+                    yield ActionSchema(name, desc, {}, 'string')
+                else:
+                    yield ActionSchema(name, desc, props, 'complex')
+            else:
+                if 'name' in props:
+                    del props['name']
+                desc = props[name].get('description', '')
+                yield ActionSchema(name, desc, props.get('args', {}), 'shell')
+
+def create_task_schema(template_file:str, actions:iter[ActionSchema]) -> dict:
     '''
     ansible-tasksのスキーマとなるテンプレートに、アクション部分の定義リストを加えたものを返す
     '''
     schema = load(template_file)
     for action in actions:
-        schema['definitions']['tasks']["anyOf"].append(action)
+        schema['definitions']['tasks']["anyOf"].append(action.get_property_scehma())
     return schema
 
 def main():
