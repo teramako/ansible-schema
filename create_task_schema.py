@@ -165,7 +165,7 @@ def get_actions(json_file:str) -> iter:
                 desc = props[name].get('description', '')
                 yield ActionSchema(name, desc, props.get('args', {}), 'shell')
 
-def create_task_schema(template_file:str, actions:iter[ActionSchema]) -> dict:
+def create_task_schema(template_file:str, actions:list[ActionSchema]) -> dict:
     '''
     ansible-tasksのスキーマとなるテンプレートに、アクション部分の定義リストを加えたものを返す
     '''
