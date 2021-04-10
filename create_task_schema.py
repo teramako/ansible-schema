@@ -15,6 +15,16 @@ EXCLUDE_ACTION_LIST = [
     "name",
     "import_playbook"
 ]
+ACTION_DESCRIPTION = {
+    "include_vars": "Load variables from files, dynamically within a task",
+    "include_tasks": "Dynamically include a task list",
+    "include": "Include a play or task list",
+    "import_tasks": "Import a task list",
+    "shell": "Execute shell commands on targets",
+    "script": "Runs a local script on a remote node after transferring it",
+    "raw": "Executes a low-down and dirty command",
+    "command": "Execute commands on targets"
+}
 def get_additional_properties_ref(name:str) -> str:
     return OTHER_RPROPERTIES.get(name, OTHER_RPROPERTIES["_"])
 
@@ -33,7 +43,10 @@ class ActionSchema:
     def __init__(self, name:str, description:str, arguments:dict,
                 actionType:str='object', additionalProperties:bool=False):
         self.name = name
-        self.description = description
+        if name in ACTION_DESCRIPTION and len(description) == 0:
+            self.description = ACTION_DESCRIPTION[name]
+        else:
+            self.description = description
         self.arguments = arguments
         self.type = actionType
         self.additionalProperties= additionalProperties
