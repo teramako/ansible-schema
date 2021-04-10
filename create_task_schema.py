@@ -38,6 +38,9 @@ class ActionSchema:
         self.type = actionType
         self.additionalProperties= additionalProperties
 
+    def update_schema(self, schema:dict):
+        schema['definitions']['tasks']['anyOf'].append(self.get_property_scehma())
+
     def get_property_scehma(self) -> dict:
         '''
         generate action property schema
@@ -155,7 +158,7 @@ def create_task_schema(template_file:str, actions:iter[ActionSchema]) -> dict:
     '''
     schema = load(template_file)
     for action in actions:
-        schema['definitions']['tasks']["anyOf"].append(action.get_property_scehma())
+        action.update_schema(schema)
     return schema
 
 def main():
