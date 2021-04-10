@@ -68,7 +68,7 @@ class ActionSchema:
                                 "description": self.description,
                                 "oneOf": [
                                     { "type": "string" },
-                                    { "type": "object", "properties": args }
+                                    args
                                 ]
                             }
                         },
@@ -142,7 +142,7 @@ def get_actions(json_file:str) -> iter:
                 if len(props) == 0:
                     yield ActionSchema(name, desc, {}, 'string')
                 else:
-                    yield ActionSchema(name, desc, props, 'complex')
+                    yield ActionSchema(name, desc, {"type":"object", "properties": props}, 'complex')
             else:
                 if 'name' in props:
                     del props['name']
