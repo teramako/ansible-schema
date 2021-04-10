@@ -59,7 +59,6 @@ class ActionSchema:
         generate action property schema
         '''
         args = copy.copy(self.arguments)
-        args['description'] = self.description
         args['additionalProperties'] = self.additionalProperties
         if self.type == 'string':
             return {
@@ -111,6 +110,7 @@ class ActionSchema:
                 ]
             }
         else:
+            args['description'] = self.description
             return {
                 "title": "Action: %s" % self.name,
                 "allOf": [
