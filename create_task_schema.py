@@ -3,6 +3,7 @@ import json
 import logging
 import io
 import copy
+import re
 
 OTHER_RPROPERTIES = {
     "_": "#/definitions/task_properties",
@@ -165,14 +166,29 @@ def get_actions(json_file:str) -> iter:
                 desc = props[name].get('description', '')
                 yield ActionSchema(name, desc, props.get('args', {}), 'shell')
 
-def create_task_schema(template_file:str, actions:list[ActionSchema]) -> dict:
+def create_task_schema(template_file:str, actions:list[ActionSchema], exclude=None) -> dict:
     '''
     ansible-tasksのスキーマとなるテンプレートに、アクション部分の定義リストを加えたものを返す
     '''
     schema = load(template_file)
     for action in actions:
+        if exclude and exclude.match(action.name):
+            logging.warning('exclude: %s', action.name)
+            continue
         action.update_schema(schema)
     return schema
+
+def get_exclude_pattern(exclude_list):
+    if not exclude_list:
+        return None
+    if exclude_list.startswith('@'):
+        with open(exclude_list[1:], 'r') as fs:
+            data = fs.read()
+            exlist = [line for line in data.splitlines() if line and not line.startswith('#')]
+    else:
+        exlist = exclude_list.split(',')
+
+    return re.compile('^(' + '|'.join((e.replace('*','.*') for e in exlist)) + ')$')
 
 def main():
     import argparse
@@ -180,10 +196,12 @@ def main():
     parser.add_argument('-o', '--output', help='output file', default='ansible-tasks-2.9.json')
     parser.add_argument('-t', '--template', help='template file', default='src/ansible-tasks-template.json')
     parser.add_argument('-r', '--role', help='role file', default='src/ansible-role-2.9')
+    parser.add_argument('-e', '--exclude', help='exclude list file', default='')
     args = parser.parse_args()
 
     try:
-        schema = create_task_schema(args.template, get_actions(args.role))
+        exclude_pattern = get_exclude_pattern(args.exclude)
+        schema = create_task_schema(args.template, get_actions(args.role), exclude=exclude_pattern)
         with open(args.output, 'w') as schema_file:
             json.dump(schema, schema_file, indent=2)
 

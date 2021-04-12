@@ -1,0 +1,376 @@
+# windows
+win_*
+# cloud
+rhevm
+serverless
+virt
+virt_*
+## cloud - amazon
+ali_*
+aws_*
+cloudformation*
+cloudtrail
+cloudwatch*
+data_pipeline
+dms_endpoint
+dynamodb_*
+ec2
+ec2_*
+ecs_*
+efs
+efs_*
+elasticache*
+elb_*
+execute_lambda
+iam
+iam_*
+kinesis_*
+lambda
+lambda_*
+lightsail
+rds
+rds_*
+redshift
+redshift_*
+route53
+route53_*
+s3_*
+sns
+sns_*
+sqs_*
+sts_*
+## cloud - atomic
+atomic_*
+## cloud - azune
+azure_*
+## cloud - centurylink
+clc_*
+## cloud - cloudfront
+cloudfront_*
+## cloud - cloudscale
+cloudscale_*
+## cloud - cloudstack
+cs_*
+## cloud - digital_ocean
+digital_ocean
+digital_ocean_*
+## cloud - dimensiondata
+dimensiondata_*
+## cloud - docker
+docker_*
+## cloud - google
+gc_storage
+gcdns_*
+gce
+gce_*
+gcp_*
+gcpubsub*
+gcspanner
+## cloud - hcloud
+hcloud_*
+## cloud - heroku
+heroku_*
+## cloud - huawei
+hwc_*
+## cloud - kubevirt
+kubevirt_*
+## cloud - linode
+linode*
+## cloud - lxc
+lxc_*
+## cloud - lxd
+lxd_*
+## cloud - memset
+memset_*
+## cloud - oneandone
+oneandone_*
+## cloud - online
+online_*
+## cloud - opennebula
+one_*
+## cloud - openstack
+os_*
+## cloud - oracle
+oci_*
+## cloud - ovh
+ovh_ip_*
+## cloud - ovirt
+ovirt
+ovirt_*
+## cloud - packet
+packet_*
+## cloud - podman
+podman_*
+## cloud - profitbricks
+profitbricks*
+## cloud - proxmox
+proxmox
+proxmox_*
+## cloud - pubnub
+pubnub*
+## cloud - rackspace
+rax
+rax_*
+## cloud - scaleway
+scaleway_*
+## cloud - smartos
+imgadm
+nictagadm
+smartos_*
+vmadm
+## cloud - softlayer
+sl_vm
+## cloud - spotinst
+spotinst_aws_*
+## cloud - univention
+udm_*
+## cloud - vmware
+vca_*
+vcenter_*
+vmware_*
+vsphere_*
+## cloud - vultr
+vultr_*
+## cloud - webfaction
+webfaction_*
+## cloud - xenserver
+xenserver_*
+# clustering
+consul
+consul_*
+etcd3
+pacemaker_cluster
+znode
+## clustering - k8s
+k8s
+k8s_*
+
+# database
+## database - aerospike
+aerospike_migrations
+## database - influxdb
+influxdb_*
+## database - mongodb
+mongodb_*
+## database - mssql
+mssql_*
+## database - mysql
+mysql_*
+## database - postgresql
+postgresql_*
+## database - proxysql
+proxysql_*
+## database - vertica
+vertica_*
+# identity
+onepassword_*
+## identity - cyberark
+cyberark_*
+## identity - ipa
+ipa_* 
+## identity - keycloak
+keycloak_*
+## identity - opendj
+opendj_*
+
+# monitoring
+datadog_*
+grafana_*
+icinga2_*
+sensu_*
+## monitoring - zabbix
+zabbix_*
+
+# net_tools
+## net_tools - exoscale
+exo_*
+## net_tools - ldap
+ldap_*
+## net_tools - netbox
+netbox_*
+## net_tools - nios
+nios_*
+
+# network
+## network - a10
+a10_*
+## network - aci
+aci_*
+mso_*
+## network - aireos
+aireos_*
+## network - aruba
+aruba_*
+## network - asa
+asa_*
+## network - avi
+avi_*
+## network - bigswitch
+bcf_switch
+bigmon_*
+## network - check_point
+checkpoint_*
+cp_mgmt_*
+cp_publish
+## network - cli
+cli_*
+## network - cloudengine
+ce_*
+## network - cloudvision
+cv_*
+## network - cnos
+cnos_*
+## network - cumulus
+nclu
+## network - dellos10
+dellos10_*
+## network - dellos6
+dellos6_*
+## network - dellos9
+dellos9_*
+## network - edgeos
+edgeos_*
+## network - edgeswitch
+edgeswitch_*
+## network - enos
+enos_*
+## network - eos
+eos_*
+## network - eric_eccli
+eric_eccli_*
+## network - exos
+exos_*
+## network - f5
+bigip_*
+bigiq_*
+## network - fortianalyzer
+faz_device
+## network - fortimanager
+fmgr_*
+## network - fortios
+fortios_*
+## network - ftd
+ftd_*
+## network - frr
+frr_*
+## network - icx
+icx_*
+## network - illumos
+dladm_*
+flowadm
+ipadm_*
+## network - ingate
+ig_*
+## network - ios
+ios_*
+## network - iosxr
+iosxr_*
+## network - ironware
+ironware_*
+## network - itential
+iap_*
+## network - junos
+junos_*
+## network - meraki
+meraki_*
+## network - netact
+netact_*
+## network - netconf
+netconf_*
+## network - netscaler
+netscaler_*
+## network - netvisor
+pn_*
+## network - nos
+nos_*
+## network - nso
+nso_*
+## network - nuage
+nuage_*
+## network - nxos
+nxos_*
+## network - onyx
+onyx_*
+## network - opx
+opx_*
+## network - ordnance
+ordnance_*
+## network - ovs
+openvswitch_*
+## network - radware
+vdirect_*
+## network - restconf
+restconf_*
+## network - routeros
+routeros_*
+## network - skydive
+skydive_*
+## network - slxos
+slxos_*
+## network - sros
+sros_*
+## network - voss
+voss_*
+## network - vyos
+vyos_*
+
+# remote_management
+## remote_management - cobbler
+cobbler_*
+## remote_management - cpm
+cpm_*
+## remote_management - dellemc
+idrac_*
+ome_*
+## remote_management - hpilo
+hpilo_*
+## remote_management - imc
+imc_*
+## remote_management - intersight
+intersight_*
+## remote_management - ipmi
+ipmi_*
+## remote_management - lxca
+lxca_*
+## remote_management - manageiq
+manageiq_*
+## remote_management - oneview
+oneview_*
+## remote_management - redfish
+redfish_*
+## remote_management - stacki
+stacki_*
+## remote_management - ucs
+ucs_*
+
+# source_control
+## source_control - bitbucket
+bitbucket_*
+## source_control - github
+github_*
+
+# storage
+## storage - emc
+emc_vnx_*
+## storage - glusterfs
+gluster_*
+## storage - hpe3par
+ss_3par_cpg
+## storage - ibm
+ibm_sa_*
+## storage - infinidat
+infini_*
+## storage - netapp
+na_elementsw_*
+na_ontap_*
+netapp_e_*
+## storage - purestorage
+purefa_*
+purefb_*
+## storage - vexata
+vexata_*
+## storage - zfs
+zfs_*
+zfs
+zpool_*
+
