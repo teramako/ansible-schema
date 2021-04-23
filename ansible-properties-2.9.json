@@ -246,7 +246,7 @@
                     "$ref": "#/definitions/ansible_number",
                     "description": "Run a task asynchronously if the C(action) supports this; value is maximum runtime in seconds."
                 },
-                "chaned_when": {
+                "changed_when": {
                     "$ref": "#/definitions/ansible_truth",
                     "description": "Conditional expression that overrides the task’s normal ‘changed’ status."
                 },
